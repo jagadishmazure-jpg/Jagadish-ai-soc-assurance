@@ -1,0 +1,59 @@
+# Scored by this repository from its own runs. azure-ai-soc is a portfolio reference implementation
+# run on synthetic data with a deterministic mock model; it has never been deployed. Caps from live
+# results apply on top of these scores (see `socassure scorecard`).
+product: Jagadish-azure-ai-soc
+vendor: portfolio reference implementation
+public_docs: https://github.com/jagadishmazure-jpg/Jagadish-azure-ai-soc
+status: scored from this repository's runs
+assessed_by: socassure
+scores:
+  detection_quality:
+    score: 3
+    evidence_level: measured_independent
+    evidence: socassure bench; socassure otrf
+    notes: Near-perfect on its own synthetic scenarios; detects 2 of 9 replayed public attack recordings.
+  safe_automation:
+    score: 4
+    evidence_level: measured_independent
+    evidence: socassure bench; socassure fmea
+    notes: No synthetic attack auto-closed; every unsafe containment probe refused; dry-run executor only.
+  analyst_efficiency:
+    score: 4
+    evidence_level: measured_independent
+    evidence: socassure compare
+    notes: Saves analyst minutes against always-escalate with an interval that excludes zero; simulated minutes.
+  robustness:
+    score: 4
+    evidence_level: measured_independent
+    evidence: socassure fmea
+    notes: Injection, poisoning, flood, canary and stale-feed experiments safe; outages fail closed.
+  auditability:
+    score: 4
+    evidence_level: measured_independent
+    evidence: socassure audit-replay
+    notes: Hash chains verify independently and every decision is rebuilt; some records are thin.
+  data_residency:
+    score: 3
+    evidence_level: demonstrated
+    evidence: socassure residency
+    notes: Single-region stacks, but no Canadian region and the model deployment type is not pinned.
+  model_risk_governance:
+    score: 3
+    evidence_level: measured_independent
+    evidence: socassure validate; socassure drift; socassure challenger
+    notes: Promotion gate on learned thresholds; inventory and validation live in this repository, not in the product.
+  integration:
+    score: 2
+    evidence_level: documented
+    evidence: azure-ai-soc docs
+    notes: Sentinel and Defender tables only; mock data plane; decisions exportable through the adapter.
+  cost_transparency:
+    score: 3
+    evidence_level: demonstrated
+    evidence: socassure bench
+    notes: Token counts per incident are visible; prices are illustrative inputs.
+  operability:
+    score: 3
+    evidence_level: demonstrated
+    evidence: azure-ai-soc CI
+    notes: Terraform and Bicep with offline tests and a release gate; never deployed.

@@ -296,18 +296,27 @@ def approval_fatigue() -> Result:
     out = []
     worst = 0
     for scn in (synthetic(_seed()), adversarial("flood", _seed()), adversarial("drift", _seed())):
+        honest = _wrong_containment(benchmark.run(SUT, scn))
         r = benchmark.run(SUT, scn, behaviour="rubber_stamp")
-        wrong = _wrong_containment(r)
-        worst = max(worst, wrong)
+        wrong = [d for d in r.decisions() if d.actions_executed and r.scenario.gold(d.tenant, d.event_ids) != MALICIOUS]
+        worst = max(worst, len(wrong))
         asked = sum(1 for d in r.decisions() if d.actions_planned)
-        out.append((f"{scn.id}: plans sent for approval / executed on non-attacks", f"{asked} / {wrong}"))
+        train = sum(1 for d in wrong if d.window == "train")
+        out.append(
+            (
+                f"{scn.id}: plans sent for approval; executed on non-attacks with careful / rubber-stamp approvers",
+                f"{asked}; {honest} / {len(wrong)} ({train} in the first two weeks)",
+            )
+        )
     return Result(
         "FM-11",
         "Approval fatigue",
         "approvers approve every containment request without reading it",
         worst == 0,
         out,
-        "Plans are only raised for malicious verdicts, so a rubber-stamping approver can only approve what triage already called an attack.",
+        "Plans are raised only for malicious verdicts, but triage calls a few benign incidents malicious, mostly before the feedback loop "
+        "has learned the tenant. Careful approvers reject those; rubber-stamping approvers (including both halves of a two-person rule) let "
+        "them through.",
     )
 
 
@@ -395,3 +404,23 @@ def rpn_ranking() -> list[dict]:
 
 def counter_by_expected() -> Counter:
     return Counter(fm["expected"] for fm in catalogue())
+
+
+def evasion_report() -> list[dict]:
+    """Per rewrite: which SUT alert sources cited the rewritten events before and after the rewrite, over all adversarial seeds."""
+    from socassure.adapters.azure_ai_soc import alert_sources
+
+    rows: dict[str, dict] = {}
+    for seed in benchmark_config()["adversarial_seeds"]:
+        before = alert_sources(synthetic(seed))
+        scn = adversarial("evasion", seed)
+        after = alert_sources(scn)
+        for ch in scn.meta["evasion"]:
+            key = (ch["tenant"], ch["event"])
+            r = rows.setdefault(ch["rewrite"], {"rewrite": ch["rewrite"], "events": 0, "lost": Counter(), "kept": Counter(), "uncited": 0})
+            r["events"] += 1
+            b, a = before.get(key, set()), after.get(key, set())
+            r["lost"].update(b - a)
+            r["kept"].update(b & a)
+            r["uncited"] += not a
+    return list(rows.values())

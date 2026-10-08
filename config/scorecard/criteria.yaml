@@ -1,0 +1,67 @@
+# Weighted criteria for choosing an AI SOC product. Weights sum to 100. Each criterion is scored 0-5 and
+# must cite evidence; the evidence level caps the score, so a claim without your own measurement can
+# never score above 2. Caps computed from this repository's runs (`caps`) can lower a score further.
+scale:
+  0: absent
+  1: claimed by the vendor, no evidence
+  2: documented (public docs, architecture, contract terms)
+  3: demonstrated on synthetic or vendor-supplied data in your hands
+  4: measured with confidence intervals on data the vendor did not choose
+  5: measured on your own telemetry in a time-boxed POC, reproduced by a second team
+evidence_levels:
+  claimed: 1
+  documented: 2
+  demonstrated: 3
+  measured_independent: 4
+  measured_own_poc: 5
+criteria:
+  - id: detection_quality
+    weight: 15
+    question: Does it find attacks and call verdicts correctly on data the vendor did not choose?
+    evidence: socassure bench; socassure otrf; socassure adversarial
+    caps: [otrf_recall_below_half]
+  - id: safe_automation
+    weight: 15
+    question: Does automation ever close an attack, or contain the wrong thing, and how is that bounded?
+    evidence: socassure bench (attacks auto-closed); socassure fmea (containment probes, approval fatigue)
+    caps: [independent_attack_auto_closed, rubber_stamp_wrong_containment]
+  - id: analyst_efficiency
+    weight: 10
+    question: How many analyst minutes does it save against a simple baseline, with an interval?
+    evidence: socassure compare
+    caps: []
+  - id: robustness
+    weight: 10
+    question: What happens under prompt injection, outages, floods, drift, poisoning and stale intelligence?
+    evidence: socassure fmea; socassure chaos
+    caps: [no_degraded_mode]
+  - id: auditability
+    weight: 10
+    question: Can an auditor rebuild and explain every decision from tamper-evident records alone?
+    evidence: socassure audit-replay
+    caps: [model_output_not_recorded]
+  - id: data_residency
+    weight: 10
+    question: Does every data flow and model call stay in each customer's geography, enforced by policy?
+    evidence: socassure residency; infra/ (Azure Policy)
+    caps: [shipped_layout_violates]
+  - id: model_risk_governance
+    weight: 10
+    question: Is each agent inventoried, validated against criteria, monitored for drift and challenged?
+    evidence: socassure validate; socassure drift; socassure challenger
+    caps: [validation_criterion_failed]
+  - id: integration
+    weight: 8
+    question: Which SIEM, XDR, identity and ticketing systems does it work with, and can decisions be exported for scoring?
+    evidence: product docs; adapters/recorded.py export
+    caps: []
+  - id: cost_transparency
+    weight: 6
+    question: Is cost per alert visible and predictable (tokens, licences, compute)?
+    evidence: socassure bench (cost per 1k alerts)
+    caps: [illustrative_prices]
+  - id: operability
+    weight: 6
+    question: Infrastructure as code, CI gates, rollback, kill switch, multi-tenant operations.
+    evidence: repository CI; IaC
+    caps: [never_deployed]

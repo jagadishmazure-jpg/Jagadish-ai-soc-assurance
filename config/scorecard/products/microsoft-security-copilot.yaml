@@ -1,0 +1,59 @@
+# Not scored: no invented numbers for real products. Fill from your own POC using template.yaml.
+product: Microsoft Security Copilot
+vendor: Microsoft
+public_docs: https://learn.microsoft.com/en-us/copilot/security/microsoft-security-copilot
+description: Generative AI assistant embedded in Microsoft security products (Defender, Sentinel, Entra, Intune, Purview). Described from the
+  vendor's public pages only; capabilities not verified here.
+status: to be filled from your own POC
+assessed_by: ''
+scores:
+  detection_quality:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  safe_automation:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  analyst_efficiency:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  robustness:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  auditability:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  data_residency:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  model_risk_governance:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  integration:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  cost_transparency:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''
+  operability:
+    score: null
+    evidence_level: claimed
+    evidence: ''
+    notes: ''

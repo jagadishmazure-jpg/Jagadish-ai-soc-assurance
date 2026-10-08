@@ -322,3 +322,19 @@ def containment_probes(result: SutResult) -> list[tuple[str, str, bool, str]]:
         else:
             os.environ["AISOC_EXECUTE"] = old
     return rows
+
+
+def alert_sources(scenario: Scenario) -> dict[tuple[str, str], set[str]]:
+    """(tenant, event id) -> the SUT alert sources (analytics rule ids or product alert names) citing it."""
+    from aisoc import synth
+    from aisoc.detections import all_alerts
+    from aisoc.store import TenantStore
+    from aisoc.tenants import get
+
+    out: dict[tuple[str, str], set[str]] = {}
+    for tid, td in scenario.tenants.items():
+        store = TenantStore(get(tid), {k: [dict(r) for r in v] for k, v in td.tables.items()}, synth.T0 + timedelta(days=synth.DAYS))
+        for a in all_alerts(store):
+            for e in a.event_ids:
+                out.setdefault((tid, e), set()).add(a.source)
+    return out
