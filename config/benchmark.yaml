@@ -1,0 +1,50 @@
+# Benchmark settings. Every number the harness prints comes from running a system on these seeded
+# scenarios; nothing here is a result. Change a value and the rendered docs change with it (CI checks).
+
+# Seeds for the synthetic suite. The system under test was developed on seed 1337, so it is excluded:
+# these seeds give the same scenario design with different background noise, people and timings.
+seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+# Smaller seed sets for the slower suites (adversarial variants, fault injection, drift reference).
+adversarial_seeds: [101, 102, 103, 104, 105]
+chaos_seed: 101
+drift:
+  reference_seeds: [101, 102, 103, 104, 105]
+  comparison_seeds: [106, 107, 108, 109, 110]
+  psi_alert: 0.25   # population stability index above this is reported as drift (common rule of thumb)
+  psi_watch: 0.10
+
+# Metrics are reported on the holdout window (days 14-20) so that systems which learn from analyst
+# feedback in days 0-13 are scored on incidents they have not learned from.
+window: holdout
+
+bootstrap:
+  resamples: 2000
+  confidence: 0.95
+  seed: 7
+  # Incidents from one tenant in one seeded scenario share a timeline, so they are resampled together
+  # (cluster bootstrap by suite, seed and tenant) rather than as independent draws.
+  cluster: tenant-seed
+
+calibration_bins: 10
+
+# Analyst time model, in minutes per human review. The same numbers apply to every system, so
+# "analyst minutes saved" counts only reviews avoided, never faster reviews. A claim that AI makes each
+# review faster needs a timed pilot with real analysts; this harness cannot measure it offline.
+analyst_minutes:
+  tier2: 20
+  tier3: 45
+  qa: 30
+# The approval request is raised this long after the incident's last alert (the system under test waits
+# the same settle time before planning containment).
+settle_minutes: 60
+
+# Token prices used for cost per alert. These are inputs, not measurements: replace them with the
+# price for your model, deployment type and region from https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/
+# The figures below are an illustrative small-model list price and are not verified for any region.
+price_per_million_tokens_usd:
+  input: 0.25
+  output: 2.00
+
+# Feedback-poisoning experiment (FM-02): training-window reviews of incidents raised by these detectors
+# are answered "benign_positive" by a corrupted analyst.
+poison_sources: [password-spray, success-after-spray, encoded-powershell, lsass-dump, mass-download, exfil-personal-cloud, phish-click, ti-url-click]

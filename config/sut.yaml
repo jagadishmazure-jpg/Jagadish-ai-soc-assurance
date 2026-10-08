@@ -1,0 +1,7 @@
+# The first system under test: the offline agentic SOC in Jagadish-azure-ai-soc. CI checks out exactly
+# this commit (scripts/fetch_sut.sh) and installs it in editable mode, so every number in the docs was
+# produced by this version. Bump the commit deliberately and re-render the docs.
+azure-ai-soc:
+  repo: https://github.com/jagadishmazure-jpg/Jagadish-azure-ai-soc
+  commit: 9db654c17c88d02c71127e572e6b6dbb80c8b61c
+  path: .sut/azure-ai-soc

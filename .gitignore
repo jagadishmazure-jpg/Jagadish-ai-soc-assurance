@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+# System under test checkout (scripts/fetch_sut.sh) and downloaded datasets
+.sut/
+.cache/
+# Generated reports (CI uploads them as artifacts)
+out/
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+backend_override.tf
+# Third-party documents are never committed
+*.pdf
+sec.txt

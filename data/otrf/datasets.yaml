@@ -1,0 +1,74 @@
+# Recordings from OTRF Security-Datasets (MIT licence, see LICENSE-OTRF in this folder), pinned to one
+# upstream commit and verified by SHA-256. Titles and ATT&CK mappings are copied from the upstream
+# metadata files (datasets/atomic/_metadata/<metadata>.yaml); `sut_rule_expected` is this repository's
+# own reading of whether the system under test has a rule aimed at the behaviour, written before the run.
+source:
+  project: OTRF Security-Datasets
+  url: https://github.com/OTRF/Security-Datasets
+  licence: MIT
+  commit: d9d40ef123d2c87d5d3df28c96bcab4f0faccc87
+  raw_base: https://raw.githubusercontent.com/OTRF/Security-Datasets
+datasets:
+  - id: psh_lsass_memory_dump_comsvcs
+    title: Lsass Memory Dump via Comsvcs.dll
+    metadata: SDWIN-201018195009
+    technique: T1003.001
+    path: datasets/atomic/windows/credential_access/host/psh_lsass_memory_dump_comsvcs.zip
+    sha256: 0af9e920220d746432f0972be83ad057629695540aecd68c15869d190786e1ae
+    sut_rule_expected: lsass-dump
+  - id: cmd_lsass_memory_dumpert_syscalls
+    title: Lsass Memory Dump via Syscalls
+    metadata: SDWIN-201018225619
+    technique: T1003.001
+    path: datasets/atomic/windows/credential_access/host/cmd_lsass_memory_dumpert_syscalls.zip
+    sha256: a28dbf708685a80edfb0b3d2a00c9bf196dd394fc1d61a933878841f4872a7ed
+    sut_rule_expected: none
+  - id: cmd_sam_copy_esentutl
+    title: SAM Copy via Esentutl VSS
+    metadata: SDWIN-201019002900
+    technique: T1003.002
+    path: datasets/atomic/windows/credential_access/host/cmd_sam_copy_esentutl.zip
+    sha256: f7a71135778aeff605abcb88a14a076f0814ab5cb136d07103bdf13c45551b64
+    sut_rule_expected: none
+  - id: cmd_psexec_lsa_secrets_dump
+    title: Psexec Reg LSA Secrets Dump
+    metadata: SDWIN-201019033054
+    technique: T1003.004
+    path: datasets/atomic/windows/credential_access/host/cmd_psexec_lsa_secrets_dump.zip
+    sha256: c52e6145fefe37373a5274e2976ccf6d62e4d33e13c55dc1a2ce17f00506d1a6
+    sut_rule_expected: none
+  - id: empire_launcher_vbs
+    title: Empire VBS Execution
+    metadata: SDWIN-190518182022
+    technique: T1059.005
+    path: datasets/atomic/windows/execution/host/empire_launcher_vbs.zip
+    sha256: 812da270cf8cda6f1948fb6275410f15dc1794d0bd6b623c9c25b2518285019c
+    sut_rule_expected: encoded-powershell
+  - id: cmd_sharpview_pcre_net
+    title: SharpView PCRE.NET
+    metadata: SDWIN-201029202324
+    technique: T1059
+    path: datasets/atomic/windows/execution/host/cmd_sharpview_pcre_net.zip
+    sha256: 314b1d08b9038dd327c8769c82564a44fd26fa1ba17ffa79e52b4683e2821dac
+    sut_rule_expected: none
+  - id: psh_cmstp_execution_bypassuac
+    title: CMSTP Proxy Execution
+    metadata: SDWIN-201022015432
+    technique: T1218.003
+    path: datasets/atomic/windows/defense_evasion/host/psh_cmstp_execution_bypassuac.zip
+    sha256: a653c698e8f779261ba0b3ac92bd604d4abe3a510cda8ab1f5ccdd421d013d4c
+    sut_rule_expected: none
+  - id: psh_mavinject_dll_notepad
+    title: Mavinject Process DLL Injection
+    metadata: SDWIN-201019232515
+    technique: T1055
+    path: datasets/atomic/windows/defense_evasion/host/psh_mavinject_dll_notepad.zip
+    sha256: 262680222316edb2dc0d7dca380dfe75191fb96779b8dacc8aac8a1d8bdc046b
+    sut_rule_expected: none
+  - id: cmd_bitsadmin_download_psh_script
+    title: Bitsadmin Download Malicious File
+    metadata: SDWIN-201023023651
+    technique: T1197
+    path: datasets/atomic/windows/defense_evasion/host/cmd_bitsadmin_download_psh_script.zip
+    sha256: 8fb7bc9f3d82f672dc39a55e50006137aa540c4a9860acdcc5d08a4fd609b594
+    sut_rule_expected: none
