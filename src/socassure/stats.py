@@ -88,7 +88,9 @@ def wilson(successes: int, n: int, confidence: float = 0.95) -> tuple[float, flo
     den = 1 + z * z / n
     centre = (p + z * z / (2 * n)) / den
     half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
-    return (max(0.0, centre - half), min(1.0, centre + half))
+    lo = 0.0 if successes == 0 else max(0.0, centre - half)
+    hi = 1.0 if successes == n else min(1.0, centre + half)
+    return (lo, hi)
 
 
 def sample_size_for(margin: float, p: float = 0.5, confidence: float = 0.95) -> int:

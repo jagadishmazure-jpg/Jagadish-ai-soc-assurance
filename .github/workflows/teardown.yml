@@ -1,0 +1,51 @@
+# Manual removal of one tenant's residency assignment and definitions. Gated by DEPLOY_ENABLED == 'true'
+# like deploy.yml, runs in the tenant's GitHub Environment (reviewer approval), and requires typing the
+# tenant name to confirm.
+name: teardown
+on:
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: "Customer tenant"
+        type: choice
+        options: [brightwater, orchidvalley, pinecrest]
+        default: orchidvalley
+      deploy_tool:
+        description: "Tool that created it"
+        type: choice
+        options: [terraform, bicep]
+        default: terraform
+      confirm:
+        description: "Type the tenant name again to confirm"
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  teardown:
+    if: vars.DEPLOY_ENABLED == 'true' && inputs.confirm == inputs.tenant
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.tenant }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      TENANT: ${{ inputs.tenant }}
+      DEPLOY_TOOL: ${{ inputs.deploy_tool }}
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TFSTATE_RESOURCE_GROUP: ${{ vars.TFSTATE_RESOURCE_GROUP }}
+      TFSTATE_STORAGE_ACCOUNT: ${{ vars.TFSTATE_STORAGE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with: { terraform_version: "1.16.4", terraform_wrapper: false }
+      - uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2.3.1
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Remove
+        run: .github/scripts/deploy.sh destroy

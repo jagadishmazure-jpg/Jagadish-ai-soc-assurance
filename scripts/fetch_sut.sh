@@ -4,8 +4,8 @@
 #   scripts/fetch_sut.sh            clone or update .sut/azure-ai-soc and pip install -e it
 set -euo pipefail
 cd "$(dirname "$0")/.."
-repo=$(python -c "import yaml;print(yaml.safe_load(open('config/sut.yaml'))['azure-ai-soc']['repo'])")
-commit=$(python -c "import yaml;print(yaml.safe_load(open('config/sut.yaml'))['azure-ai-soc']['commit'])")
+repo=$(awk '/^ *repo:/ {print $2; exit}' config/sut.yaml)
+commit=$(awk '/^ *commit:/ {print $2; exit}' config/sut.yaml)
 dest=.sut/azure-ai-soc
 if [[ ! -d "$dest/.git" ]]; then
   git clone --quiet "$repo" "$dest"

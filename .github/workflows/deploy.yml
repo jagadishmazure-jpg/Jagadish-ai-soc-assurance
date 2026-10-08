@@ -1,0 +1,73 @@
+# Assign the data-residency Azure Policy initiative to one customer subscription, with Terraform or Bicep.
+#
+# GATED OFF: every job except `preflight` runs only when the repository variable DEPLOY_ENABLED ==
+# 'true'. It is not set, so this workflow reports the gate and skips. Nothing in this repository has been
+# deployed. Start with policy_effect Audit, read the compliance results, then switch to Deny.
+#
+# Azure login is OIDC only (azure/login with a federated credential): no client secret exists.
+name: deploy
+on:
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: "Customer tenant (subscription per tenant)"
+        type: choice
+        options: [brightwater, orchidvalley, pinecrest]
+        default: orchidvalley
+      deploy_tool:
+        description: "IaC tool"
+        type: choice
+        options: [terraform, bicep]
+        default: terraform
+permissions:
+  contents: read
+concurrency:
+  group: deploy-${{ inputs.tenant }}
+  cancel-in-progress: false
+env:
+  TENANT: ${{ inputs.tenant }}
+  DEPLOY_TOOL: ${{ inputs.deploy_tool }}
+  TF_VERSION: "1.16.4"
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report deploy gate
+        env:
+          ENABLED: ${{ vars.DEPLOY_ENABLED == 'true' }}
+        run: |
+          {
+            echo "### Deploy gate"
+            echo "- DEPLOY_ENABLED: \`${ENABLED}\` (the assign job runs only when this is true)"
+            echo "- tenant: \`${TENANT}\`, tool: \`${DEPLOY_TOOL}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [[ "$ENABLED" == "true" ]] || echo "::notice::Deployment disabled (repository variable DEPLOY_ENABLED is not 'true'); the assign job is skipped."
+
+  assign:
+    needs: preflight
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.tenant }} # required reviewers per customer environment
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TFSTATE_RESOURCE_GROUP: ${{ vars.TFSTATE_RESOURCE_GROUP }}
+      TFSTATE_STORAGE_ACCOUNT: ${{ vars.TFSTATE_STORAGE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with: { terraform_version: "${{ env.TF_VERSION }}", terraform_wrapper: false }
+      - uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2.3.1
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Assign the residency initiative (${{ env.DEPLOY_TOOL }})
+        run: .github/scripts/deploy.sh assign
+      - name: Smoke check (assignment present, effect as configured)
+        run: .github/scripts/deploy.sh smoke
