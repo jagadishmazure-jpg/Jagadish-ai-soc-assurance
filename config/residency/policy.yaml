@@ -1,0 +1,72 @@
+# Data-residency policy model. Each customer tenant has a home geography; each data class says where it
+# may be processed. Region lists are a working subset, not every Azure region. Processing scopes for model
+# deployment types follow Microsoft Learn ("Deployment types for Microsoft Foundry Models":
+# https://learn.microsoft.com/azure/ai-foundry/foundry-models/concepts/deployment-types and
+# "Data, privacy, and security for Foundry Models sold by Azure":
+# https://learn.microsoft.com/azure/ai-foundry/responsible-ai/openai/data-privacy). Anything marked
+# `verified: false` is this repository's assumption and must be checked for a real deployment.
+geographies:
+  united-states:
+    regions: [eastus, eastus2, centralus, northcentralus, southcentralus, westus, westus2, westus3]
+    data_zone: US
+  canada:
+    regions: [canadacentral, canadaeast]
+    data_zone: null   # the Learn page lists US, EU and APAC data zones; none is Canada-only
+  europe:
+    regions: [westeurope, northeurope, swedencentral, francecentral, germanywestcentral, italynorth, polandcentral, spaincentral]
+    data_zone: EU
+data_zones:
+  US: united-states
+  EU: europe
+# Where a model deployment type processes prompts and completions.
+deployment_types:
+  GlobalStandard: global
+  GlobalProvisionedManaged: global
+  GlobalBatch: global
+  DeveloperTier: global
+  DataZoneStandard: data_zone
+  DataZoneProvisionedManaged: data_zone
+  DataZoneBatch: data_zone
+  Standard: geography
+  ProvisionedManaged: geography
+data_classes:
+  security_telemetry:
+    description: Sign-ins, process, network, email and cloud-app events with user names, hosts and addresses
+    scope: tenant_geography
+  pseudonymised_evidence:
+    description: Prompt text after redaction and pseudonymisation; still personal data where the mapping exists
+    scope: tenant_geography
+  audit_records:
+    description: Hash-chained decision records naming users, hosts, approvers and actions
+    scope: tenant_geography
+  threat_intel:
+    description: Shared indicators of compromise with no customer data
+    scope: anywhere
+  aggregate_metrics:
+    description: Counts and rates with no identifiers
+    scope: anywhere
+tenants:
+  brightwater:
+    name: Brightwater Logistics
+    geography: united-states
+    allow_data_zone: true
+  orchidvalley:
+    name: Orchid Valley Clinics
+    geography: canada
+    allow_data_zone: false
+    note: Health records of a Canadian clinic group; keeping processing in Canada is this repository's assumption for the scenario (verified false), not legal advice.
+    verified: false
+  pinecrest:
+    name: Pinecrest Credit Union
+    geography: united-states
+    allow_data_zone: true
+# The data flows every tenant has. `where` names the deployment field that says where the flow lands.
+flows:
+  - { id: F1, name: telemetry into the Sentinel workspace, data_class: security_telemetry, where: workspace }
+  - { id: F2, name: agents read the workspace, data_class: security_telemetry, where: agents }
+  - { id: F3, name: prompts to the model endpoint, data_class: pseudonymised_evidence, where: model }
+  - { id: F4, name: prompt screening (Content Safety), data_class: pseudonymised_evidence, where: content_safety }
+  - { id: F5, name: audit chain storage, data_class: audit_records, where: audit }
+  - { id: F6, name: analysts view incidents, data_class: security_telemetry, where: analysts }
+  - { id: F7, name: shared threat-intel feed, data_class: threat_intel, where: threat_intel }
+  - { id: F8, name: MSSP reporting, data_class: aggregate_metrics, where: reporting }

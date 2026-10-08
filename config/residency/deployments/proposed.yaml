@@ -1,0 +1,33 @@
+# A residency-aware layout this repository proposes. US tenants use a US data-zone model deployment;
+# the Canadian tenant keeps everything in Canadian regions with a geography (Standard) deployment and a
+# Canada-based on-call analyst group. Whether a given model offers Standard deployments in canadaeast
+# must be checked on the model availability page before relying on this (verified: false).
+name: proposed residency-aware layout
+tenants:
+  brightwater:
+    workspace: eastus2
+    agents: eastus2
+    model: { region: eastus2, deployment_type: DataZoneStandard }
+    content_safety: eastus2
+    audit: eastus2
+    analysts: united-states
+    threat_intel: global
+    reporting: global
+  orchidvalley:
+    workspace: canadacentral
+    agents: canadacentral
+    model: { region: canadaeast, deployment_type: Standard, verified: false }
+    content_safety: canadacentral
+    audit: canadacentral
+    analysts: canada
+    threat_intel: global
+    reporting: global
+  pinecrest:
+    workspace: centralus
+    agents: centralus
+    model: { region: eastus2, deployment_type: DataZoneStandard }
+    content_safety: centralus
+    audit: centralus
+    analysts: united-states
+    threat_intel: global
+    reporting: global

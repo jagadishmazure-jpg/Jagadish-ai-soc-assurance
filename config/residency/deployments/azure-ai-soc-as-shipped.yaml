@@ -1,0 +1,34 @@
+# Where data would land if azure-ai-soc were deployed with its shipped defaults. Evidence: its Terraform
+# `location` variable accepts eastus2, westus2 or westeurope (default eastus2) and its Bicep defaults to
+# eastus2; one stack per tenant, so every tenant lands in eastus2. Its model client takes a deployment
+# name only (FOUNDRY_MODEL), so the deployment type is not set anywhere in code: recorded as unset.
+# The fictional MSSP's analysts work from the United States.
+name: azure-ai-soc as shipped
+tenants:
+  brightwater:
+    workspace: eastus2
+    agents: eastus2
+    model: { region: eastus2, deployment_type: unset }
+    content_safety: eastus2
+    audit: eastus2
+    analysts: united-states
+    threat_intel: global
+    reporting: global
+  orchidvalley:
+    workspace: eastus2
+    agents: eastus2
+    model: { region: eastus2, deployment_type: unset }
+    content_safety: eastus2
+    audit: eastus2
+    analysts: united-states
+    threat_intel: global
+    reporting: global
+  pinecrest:
+    workspace: eastus2
+    agents: eastus2
+    model: { region: eastus2, deployment_type: unset }
+    content_safety: eastus2
+    audit: eastus2
+    analysts: united-states
+    threat_intel: global
+    reporting: global

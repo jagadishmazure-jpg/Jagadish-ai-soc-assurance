@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "tenantSlug": {
+      "value": "pinecrest"
+    },
+    "allowedLocations": {
+      "value": [
+        "eastus",
+        "eastus2",
+        "centralus",
+        "westus2",
+        "westus3"
+      ]
+    },
+    "allowedModelDeploymentTypes": {
+      "value": [
+        "Standard",
+        "ProvisionedManaged",
+        "DataZoneStandard",
+        "DataZoneProvisionedManaged",
+        "DataZoneBatch"
+      ]
+    },
+    "policyEffect": {
+      "value": "Deny"
+    }
+  }
+}

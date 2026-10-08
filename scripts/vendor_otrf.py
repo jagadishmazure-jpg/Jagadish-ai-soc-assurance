@@ -37,7 +37,7 @@ def fetch(url: str, sha256: str) -> bytes:
     CACHE.mkdir(parents=True, exist_ok=True)
     f = CACHE / url.rsplit("/", 1)[1]
     if not f.exists():
-        with urllib.request.urlopen(url, timeout=60) as r:  # noqa: S310 - fixed https URL at a pinned commit
+        with urllib.request.urlopen(url, timeout=60) as r:  # fixed https URL at a pinned commit
             f.write_bytes(r.read())
     blob = f.read_bytes()
     got = hashlib.sha256(blob).hexdigest()
@@ -74,7 +74,9 @@ def sample() -> list[dict]:
         t0 = _ts(rows[0])
         for i, r in enumerate(rows):
             sha = next((h.split("=", 1)[1] for h in str(r.get("Hashes", "")).split(",") if h.startswith("SHA256=")), "")
-            out.append({"dataset": ds["id"], "seq": i + 1, "offset_s": int((_ts(r) - t0).total_seconds()), **{k: r.get(k, "") for k in KEEP}, "SHA256": sha})
+            out.append(
+                {"dataset": ds["id"], "seq": i + 1, "offset_s": int((_ts(r) - t0).total_seconds()), **{k: r.get(k, "") for k in KEEP}, "SHA256": sha}
+            )
     return out
 
 
