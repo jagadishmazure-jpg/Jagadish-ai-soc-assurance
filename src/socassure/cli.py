@@ -158,9 +158,12 @@ def cmd_evasion(a) -> int:
 
 def cmd_claim(a) -> int:
     c = claims.check(a.k, a.n, a.claimed)
-    print(
-        f"claimed {a.claimed:g}%; observed {a.k}/{a.n} = {c['observed_pct']:.1f}% (95% Wilson interval {c['lo']:.1f}-{c['hi']:.1f}%): {c['verdict']}"
-    )
+    if c["observed_pct"] is None:
+        print(f"claimed {a.claimed:g}%; observed 0/0: {c['verdict']}")
+    else:
+        print(
+            f"claimed {a.claimed:g}%; observed {a.k}/{a.n} = {c['observed_pct']:.1f}% (95% Wilson interval {c['lo']:.1f}-{c['hi']:.1f}%): {c['verdict']}"
+        )
     for m in (10, 5, 2):
         print(f"items needed for a +/-{m} point margin at {a.claimed:g}%: {claims.needed(m, a.claimed)}")
     print("ask the vendor:")
@@ -180,6 +183,11 @@ def cmd_fmea(a) -> int:
         rows.append([fm["id"], fm["name"], fm["severity"], fm["occurrence"], fm["detection"], fm["rpn"], exp, obs, "yes" if ok else "NO"])
     print("ranked by risk priority number (severity x occurrence x detection, 1-10 each); observed from the experiments")
     print(table(rows, ["id", "failure mode", "S", "O", "D", "RPN", "expected", "observed", "agrees"]))
+    if a.detail:
+        for fm in failures.catalogue():
+            print(f"\n{fm['id']} {fm['name']}")
+            for k in ("cause", "effect", "detection_method", "mitigation"):
+                print(f"  {k.replace('_', ' ')}: {fm[k]}")
     return 0
 
 
@@ -280,6 +288,12 @@ def cmd_audit_replay(a) -> int:
     ex = next(t for rep in reports for t in rep.trails if t.executions)
     print("example explanation:")
     print(f"  {audit_replay.explain(ex, rel)}")
+    if a.show == "md":
+        print()
+        print(audit_replay.to_markdown(reports, rel, examples=1).rstrip())
+    elif a.show == "csv":
+        print()
+        print("\n".join(audit_replay.to_csv(reports, rel).splitlines()[: a.rows + 1]))
     if a.out:
         paths = audit_replay.write_reports(reports, Path(a.out), rel)
         print("wrote " + ", ".join(p.name for p in paths) + f" to {a.out}")
@@ -404,7 +418,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--n", type=int, required=True, help="items observed")
     p.add_argument("--claimed", type=float, required=True, help="claimed percentage")
     p.set_defaults(fn=cmd_claim)
-    sub.add_parser("fmea").set_defaults(fn=cmd_fmea)
+    p = sub.add_parser("fmea")
+    p.add_argument("--detail", action="store_true", help="cause, effect, detection and mitigation per failure mode")
+    p.set_defaults(fn=cmd_fmea)
     p = sub.add_parser("chaos")
     p.add_argument("--experiment", choices=sorted(failures.EXPERIMENTS))
     p.set_defaults(fn=cmd_chaos)
@@ -421,6 +437,8 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("audit-replay")
     p.add_argument("--seed", type=int, default=scenarios.benchmark_config()["chaos_seed"])
     p.add_argument("--out", help="folder for audit-report.md / .html / audit-decisions.csv")
+    p.add_argument("--show", choices=("md", "csv"), help="also print the Markdown report or the first CSV rows")
+    p.add_argument("--rows", type=int, default=4, help="CSV rows to print with --show csv")
     p.set_defaults(fn=cmd_audit_replay)
     p = sub.add_parser("scorecard")
     p.add_argument("--product")
