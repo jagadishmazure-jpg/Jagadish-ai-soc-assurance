@@ -1,12 +1,9 @@
 # The gaps this repository closes
 
-This repository started from a reading of a vendor whitepaper on AI-powered security operations,
-[Conifers' guide to the AI-powered SOC](https://www.conifers.ai/blog/ai-powered-soc/). The guide is useful
-as a map of the problem space and of one vendor's pitch. Its text is not quoted, copied or included here;
-it is credited by link only. Its headline figures (an 87% figure and results attributed to a customer
-deployment) are the vendor's own account, with no published method, denominator or interval.
+Vendor material on AI-powered security operations is a useful map of the problem space, but its headline
+figures usually come with no published method, denominator or interval.
 
-What the guide does not give a buyer, and where this repository fills each gap:
+What such material does not give a buyer, and where this repository fills each gap:
 
 | Gap | What a buyer needs | Where it is closed | Evidence command |
 | --- | --- | --- | --- |

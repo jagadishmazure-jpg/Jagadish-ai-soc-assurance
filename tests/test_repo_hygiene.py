@@ -1,4 +1,4 @@
-"""Repository hygiene: complete docs, current outputs, no dates, no real identifiers, no copied whitepaper."""
+"""Repository hygiene: complete docs, current outputs, no dates, no real identifiers, no copied third-party documents."""
 
 import re
 import subprocess
@@ -23,7 +23,6 @@ SUFFIXES = {".md", ".py", ".json", ".yml", ".yaml", ".tf", ".bicep", ".hcl", ".s
 TEXT_FILES = [p for p in ROOT.rglob("*") if p.is_file() and not SKIP_PARTS & set(p.relative_to(ROOT).parts) and p.suffix in SUFFIXES]
 # The OTRF recordings contain the public COM class id of the comsvcs MiniDump technique.
 PUBLIC_GUIDS = {"3e5fc7f9-9a51-4367-9063-a120244fbec7"}
-GUIDE_LINK = "https://www.conifers.ai/blog/ai-powered-soc/"
 GAPS = ("Independent benchmarks", "Failure modes", "Data residency", "Model risk", "Decision audit", "Product comparison")
 
 
@@ -132,19 +131,16 @@ def test_flood_uses_documentation_addresses():
     assert re.findall(r'f"(\d+\.\d+\.\d+\.)\{', src) == ["198.51.100."]
 
 
-def test_whitepaper_is_never_committed_and_only_linked():
+def test_third_party_documents_are_never_committed():
     tracked = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True).stdout.split()
     assert not [f for f in tracked if f.lower().endswith(".pdf") or f.endswith("sec.txt")]
     assert "*.pdf" in (ROOT / ".gitignore").read_text()
-    gaps = flat(ROOT / "docs/gaps.md")
-    assert "Conifers" in gaps and GUIDE_LINK in gaps and "not quoted" in gaps
 
 
 def test_readme_maps_every_gap_to_a_section():
     t = flat(ROOT / "README.md")
     for g in GAPS:
         assert g in t, g
-    assert GUIDE_LINK in t
 
 
 def test_organisations_are_fictional():

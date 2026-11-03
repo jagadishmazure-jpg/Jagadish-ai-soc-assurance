@@ -28,7 +28,7 @@ blocks, and update any hand-written sentence that quotes them.
 - Never score a real product in `config/scorecard/products/`; leave its scores empty.
 - Changing an FMEA expectation, a validation threshold or a scorecard weight is a reviewed change with a
   reason in the pull request.
-- Never commit third-party documents. Paraphrase and attribute; run
+- Never commit third-party documents. Run
   `python scripts/overlap_check.py <reference text>` on new prose and expect zero shared eight-word runs.
 - Statements about Microsoft services link to Microsoft documentation; anything not checked is marked
   unverified.

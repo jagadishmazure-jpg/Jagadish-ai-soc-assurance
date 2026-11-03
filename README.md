@@ -12,11 +12,9 @@ independently, and scores it with caps from its own failures. The first system u
 
 ## At a glance (for recruiters)
 
-- **Why it exists.** Vendor material on AI SOCs, such as
-  [Conifers' guide to the AI-powered SOC](https://www.conifers.ai/blog/ai-powered-soc/), maps the problem
-  well but gives no independent benchmarks, failure modes, residency or model-risk detail, no account of
-  how agent decisions are audited, and no comparison with other products. Its headline figures are the
-  vendor's own account. This repository closes those six gaps with code and real runs.
+- **Why it exists.** Vendor material on AI SOCs usually maps the problem well but gives no independent
+  benchmarks, failure modes, residency or model-risk detail, no account of how agent decisions are
+  audited, and no comparison with other products. Its headline figures are the vendor's own account. This repository closes those six gaps with code and real runs.
 - **Independent benchmark with intervals.** The SUT against two baselines on 30 tenant-runs, with cluster
   bootstrap intervals: it saves about 1,470 analyst minutes per 100 incidents against always-escalate and
   never auto-closes a synthetic attack, while a severity-rules baseline closes one attack in five. On
@@ -57,9 +55,6 @@ Terraform, Bicep, GitHub Actions supply-chain hardening, AI FinOps (cost per ale
 | Model risk | [docs/components/model-risk.md](docs/components/model-risk.md) and [docs/model-risk/](docs/model-risk/README.md) | `socassure validate`, `drift`, `challenger` |
 | Decision audit | [docs/components/decision-audit.md](docs/components/decision-audit.md) | `socassure audit-replay` |
 | Product comparison | [docs/components/product-scorecard.md](docs/components/product-scorecard.md) and [docs/vendor-claims.md](docs/vendor-claims.md) | `socassure scorecard`, `claim` |
-
-The whitepaper is credited by link only; none of its text is in this repository (see
-[docs/gaps.md](docs/gaps.md)).
 
 ## Architecture
 

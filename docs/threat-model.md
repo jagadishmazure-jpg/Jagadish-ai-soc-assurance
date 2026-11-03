@@ -30,4 +30,4 @@ the threats to the assurance results.
 | Expected findings silently "fixed" | lost findings | gate fails if FMEA observation and expectation differ |
 | Third-party data licence or integrity | legal or data error | OTRF pinned to a commit, hashed, licence shipped |
 | Supply chain of the harness | compromised results | SHA-pinned actions, Dependabot, CodeQL, gitleaks, SBOM |
-| Vendor whitepaper text copied | copyright | not committed, credited by link only; overlap check before publishing |
+| Third-party text copied | copyright | never committed; overlap check before publishing |

@@ -27,8 +27,7 @@ so there is no formal SLA or bug bounty.
   deployment types; the initiative defaults to `Deny`.
 - **Third-party data is pinned and hashed.** The OTRF extract records the source commit and a SHA-256 per
   archive; the vendoring script verifies before writing.
-- **Copyrighted material is never committed.** The vendor whitepaper that motivated this repository is
-  credited by link only; `*.pdf` is ignored and a test checks no PDF is tracked.
+- **Copyrighted material is never committed.** `*.pdf` is ignored and a test checks no PDF is tracked.
 - **Supply chain:** SHA-pinned actions, Dependabot (pip, GitHub Actions, Terraform), CodeQL for Python and
   workflows, gitleaks over full history, an SPDX SBOM, pinned Python dependencies, checkov (no skips) and
   tflint on Terraform.

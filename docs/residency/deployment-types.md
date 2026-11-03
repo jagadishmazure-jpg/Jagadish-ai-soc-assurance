@@ -5,14 +5,14 @@ resource's region, decides where prompts and completions are processed. This pag
 documentation in this repository's own words and says how the residency checker uses it. Read the linked
 pages for the authoritative text; they change.
 
-Sources:
+Microsoft documentation:
 
 * Microsoft Learn, [Deployment types for Microsoft Foundry Models](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/deployment-types)
 * Microsoft Learn, [Data, privacy, and security for Foundry Models sold by Azure](https://learn.microsoft.com/en-us/azure/ai-foundry/responsible-ai/openai/data-privacy)
 * Microsoft Learn, [Azure Policy definition structure](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure-basics)
 * Microsoft Learn, [Microsoft Sentinel geographical availability and data residency](https://learn.microsoft.com/en-us/azure/sentinel/geographical-availability-data-residency)
 
-## What the documentation says (paraphrased)
+## What the documentation says
 
 | Family | SKU names | Processing location per the Learn page | Checker treats it as |
 | --- | --- | --- | --- |
