@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import pytest
 
@@ -161,7 +162,8 @@ def test_readme_never_claims_deployment():
 
 def test_microsoft_statements_link_to_microsoft_docs():
     t = (ROOT / "docs/residency/deployment-types.md").read_text()
-    assert "https://learn.microsoft.com/" in t and "unverified" in t.lower()
+    links = re.findall(r"https://[^\s)>\]]+", t)
+    assert any(urlparse(u).hostname == "learn.microsoft.com" for u in links) and "unverified" in t.lower()
 
 
 def test_changelog_has_only_unreleased():

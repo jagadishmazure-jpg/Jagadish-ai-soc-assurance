@@ -31,7 +31,8 @@ class SystemUnderTest(Protocol):
     description: str
     supported_faults: frozenset[str]
 
-    def run(self, scenario: Scenario, oracle: Oracle, faults: frozenset[str] = frozenset()) -> SutResult: ...
+    def run(self, scenario: Scenario, oracle: Oracle, faults: frozenset[str] = frozenset()) -> SutResult:
+        """Run one scenario with the given faults injected and return the result."""
 
 
 def check_faults(sut: SystemUnderTest, faults: frozenset[str]) -> None:
