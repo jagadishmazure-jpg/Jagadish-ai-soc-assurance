@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import ast
 import contextlib
+import difflib
 import io
 import re
 import shlex
@@ -118,6 +119,9 @@ def main(argv: list[str]) -> int:
         new = render(old)
         if new != old:
             stale.append(p.relative_to(ROOT))
+            if check:
+                rel = str(p.relative_to(ROOT))
+                sys.stdout.writelines(difflib.unified_diff(old.splitlines(True), new.splitlines(True), f"a/{rel}", f"b/{rel}"))
             if not check:
                 p.write_text(new)
     if check and stale:
