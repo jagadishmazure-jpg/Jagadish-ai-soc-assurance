@@ -52,6 +52,6 @@ residency, and never scoring a real product.
 
 ## What runs where
 
-Everything runs offline on one machine: Python 3.13, the SUT installed from its pinned commit, no network
+Everything runs offline on one machine: Python 3.13 (CI pins the exact patch, 3.13.18, so doc outputs are reproducible), the SUT installed from its pinned commit, no network
 except to fetch the SUT and (optionally) re-vendor OTRF data. Nothing is deployed. The deploy workflow
 exists for an adopter and is gated off.
